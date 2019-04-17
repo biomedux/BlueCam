@@ -405,16 +405,15 @@ class App:
 
         if MODE == MODE_PC:
             sub.run(['stillcap', '/device', 'RecordexUSA','/format', str(camera_width), str(camera_height), str(camera_frate), 'MJPG', '/out', PATH + 'temp.jpg','100'])
-
-            self.vid = cv2.VideoCapture(self.video_source)
-
-            frame = cv2.imread(PATH + 'temp.jpg')
-
-            frame = frame[sy:ey, sx:ex] #crop
-            cv2.imwrite(fname, frame)
         else:
             sub.run(['fswebcam', '--crop', "%dx%d,%dx%d" % (ex-sx,ey-sy,sx,sy), '-r', "%dx%d" % (camera_width, camera_height), '--no-subtitle', '--no-timestamp', '--no-overlay', '--no-banner', '--jpeg', '95', fname])
 
+        self.vid = cv2.VideoCapture(self.video_source)
+
+        if MODE == MODE_PC:
+            frame = cv2.imread(PATH + 'temp.jpg')
+            frame = frame[sy:ey, sx:ex] #crop
+            cv2.imwrite(fname, frame)
 
         while 1:
             self.nof = len(gb.glob(PATH + 'Pictures/frame-*'))
