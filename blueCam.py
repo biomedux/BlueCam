@@ -268,7 +268,12 @@ class App:
 
     def live(self):
         if not self.isLive:
-            if MODE == MODE_PI:
+            self.vid = cv2.VideoCapture(self.video_source)
+
+            if MODE == MODE_PC:
+                self.vid.set(cv2.CAP_PROP_FRAME_WIDTH, camera_width)
+                self.vid.set(cv2.CAP_PROP_FRAME_HEIGHT, camera_height)
+            else:
                 self.vid.set(cv2.CAP_PROP_FRAME_WIDTH, frame_video_width)
                 self.vid.set(cv2.CAP_PROP_FRAME_HEIGHT, frame_video_height)
 
@@ -390,25 +395,16 @@ class App:
         self.focusSlider.set(self.focus)
 
     def snapshot(self):
-        # Get a frame from the video source
-        if MODE == MODE_PI:
-            self.vid.set(cv2.CAP_PROP_FRAME_WIDTH, camera_width)
-            self.vid.set(cv2.CAP_PROP_FRAME_HEIGHT, camera_height)
-
         self.isLive=False
         self.btnStateChange()
-
         self.vid.release()
 
-        #ret, frame = self.vid.read()
         fname = PATH + "Pictures/frame-" + time.strftime("%d-%m-%Y-%H-%M-%S") + "_" + str(crop_scale) + ".jpg"
 
         if MODE == MODE_PC:
             sub.run(['stillcap', '/device', 'RecordexUSA','/format', str(camera_width), str(camera_height), str(camera_frate), 'MJPG', '/out', PATH + 'temp.jpg','100'])
         else:
             sub.run(['fswebcam', '--crop', "%dx%d,%dx%d" % (ex-sx,ey-sy,sx,sy), '-r', "%dx%d" % (camera_width, camera_height), '--no-subtitle', '--no-timestamp', '--no-overlay', '--no-banner', '--jpeg', '95', fname])
-
-        self.vid = cv2.VideoCapture(self.video_source)
 
         if MODE == MODE_PC:
             frame = cv2.imread(PATH + 'temp.jpg')
