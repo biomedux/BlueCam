@@ -402,7 +402,9 @@ class App:
         fname = PATH + "Pictures/frame-" + time.strftime("%d-%m-%Y-%H-%M-%S") + "_" + str(crop_scale) + ".jpg"
 
         if MODE == MODE_PC:
-            sub.run(['stillcap', '/device', 'RecordexUSA','/format', str(camera_width), str(camera_height), str(camera_frate), 'MJPG', '/out', PATH + 'temp.jpg','100'])
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            sub.run(['stillcap', '/device', 'RecordexUSA','/format', str(camera_width), str(camera_height), str(camera_frate), 'MJPG', '/out', PATH + 'temp.jpg','100'], startupinfo=startupinfo)
         else:
             sub.run(['fswebcam', '--crop', "%dx%d,%dx%d" % (ex-sx,ey-sy,sx,sy), '-r', "%dx%d" % (camera_width, camera_height), '--no-subtitle', '--no-timestamp', '--no-overlay', '--no-banner', '--jpeg', '95', fname])
 
