@@ -26,44 +26,55 @@ else:
 
 if MODE == MODE_PC:
     PATH = './'
+    sub.run(['camNo'])
+    f = open(PATH + "camNo.txt", 'r')
+    VIDEO = int(f.readline()) # Get RecordexUSA Index
+    f.close()
 elif MODE == MODE_PI:
     PATH = '/home/pi/Desktop/'
     import socket
     import fcntl
     import struct
 
-print("mode",MODE,"video",VIDEO)
-camera_width = 3264  #KJD190319
-camera_height = 2448
-camera_frate = 10
-
-frame_video_width = 1600
-frame_video_height = 1200
-
-preview_width = 640
-preview_height = 480
-
 f = open(PATH + "setting.txt", 'r')
-crop_scale   = int(f.readline()) # 98
+crop_scale = int(f.readline()) # 98
 f.close()
 
-still_width  = int((float(camera_width)*float(crop_scale)/100.)) #int(f.readline()) # 3264
-still_height = int((float(camera_height)*float(crop_scale)/100.)) # 2448
+camera_width       = 3264  #KJD190319
+camera_height      = 2448
+camera_frate       = 10
 
-video_width  = int((float(frame_video_width)*float(crop_scale)/100.))
-video_height = int((float(frame_video_height)*float(crop_scale)/100.))
+frame_video_width  = 1600
+frame_video_height = 1200
 
-exposure_pi_table = [0.0050, 0.0078, 0.0156, 0.0312, 0.0625, 0.1250, 0.2500, 0.5000, 1.0000]
-exposure_pc_table = [-8, -7, -6, -5, -4, -3, -2, -1, 0]
+preview_width      = 640
+preview_height     = 480
 
-min_exposure = 0
-max_exposure = 8
+still_width        = int((float(camera_width)*float(crop_scale)/100.)) #int(f.readline()) # 3264
+still_height       = int((float(camera_height)*float(crop_scale)/100.)) # 2448
 
-min_pc_focus = 0
-max_pc_focus = 1023
+video_width        = int((float(frame_video_width)*float(crop_scale)/100.))
+video_height       = int((float(frame_video_height)*float(crop_scale)/100.))
 
-min_pi_focus = 0
-max_pi_focus = 99
+exposure_pi_table  = [0.0050, 0.0078, 0.0156, 0.0312, 0.0625, 0.1250, 0.2500, 0.5000, 1.0000]
+exposure_pc_table  = [-8, -7, -6, -5, -4, -3, -2, -1, 0]
+
+min_exposure       = 0
+max_exposure       = 8
+
+min_pc_focus       = 0
+max_pc_focus       = 1023
+
+min_pi_focus       = 0
+max_pi_focus       = 99
+
+if (VIDEO == -1):
+    print("Camera not found.")
+
+    while True:
+        pass
+
+print("mode", MODE, "video", VIDEO)
 
 # snapshot
 sx=int((camera_width-still_width)/2)
